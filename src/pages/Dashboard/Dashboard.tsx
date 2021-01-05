@@ -1,9 +1,10 @@
 import React from 'react'
+import {Title}  from './styles'
 
 const Dashboard:React.FC = () => {
     return (
         <>
-            <h1 style={{color:'black'}}>Explore repositórios no github</h1>
+            <Title>Explore repositórios no github</Title>
         </>
     )
 }
