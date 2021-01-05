@@ -1,21 +1,73 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouteMatch, Link } from 'react-router-dom';
 
 import { Header, RepositoryInfo , Issues } from './styles';
 
-import foto from '../../assets/img-1.jpeg'
+
+import api from '../../services/api'
 
 import { FiChevronLeft} from 'react-icons/fi'
 
-import logoImg from '../../assets/1587379765556-attachment.svg'
+import logoImg from '../../assets/logo.svg'
 
 interface RepositoryParams {
     repository: string;
 }
 
+interface Repository {
+    full_name:string;
+    description:string;
+    owner: {
+        login:string;
+        avatar_url: string;
+    };
+    stargazers_count:number;
+    forks_count:number;
+    open_issues_count:number;
+    
+}
+
+interface Issue  {
+    id: number;
+    title: string;
+    user: {
+        login:string;
+    }
+    html_url:string;
+}
+
 const Repositories:React.FC = () => {
 
     const { params } = useRouteMatch<RepositoryParams>();
+
+    const [repository, setRepository] = useState<Repository | null> (null);
+    const [issues, setIssues] = useState<Issue[]>([]);
+
+    useEffect (() => {
+        // async function loadData(): Promise<void> {
+        //     const repository = await api.get(`repos/${params.repository}`).then(response =>{
+        //         console.log(response);
+        //     })
+        //     const issues = await api.get(`repos/${params.repository}/issues`).then(response =>{
+        //         console.log(response);
+        //     })
+        // }
+    
+
+        // api.get(`repos/${params.repository}`).then(response =>{
+        //         console.log(response);
+        // })
+
+        api.get(`repos/${params.repository}`).then((response) => {
+            setRepository(response.data);
+        });
+
+        api.get(`repos/${params.repository}/issues`).then((response) => {
+            setIssues(response.data);
+        });
+    }, [params.repository])
+
+    
 
     return(
     <>
@@ -27,39 +79,45 @@ const Repositories:React.FC = () => {
             </Link>
         </Header>
 
-        <RepositoryInfo>
+        { repository && (
+            <RepositoryInfo>
             <>
             <header>
-                <img src={foto} alt="foto"/>
+                <img src={repository.owner.avatar_url} alt="foto"/>
                 <div>
-                    <strong>rockeseat/unform</strong>
-                    <p>descricao de respositorio</p>
+                    <strong>{repository.owner.login}</strong>
+                    <p>{repository.description}</p>
                 </div>
             </header>
             <ul>
                 <li>
-                    <strong>1808</strong>
+                    <strong>{repository.stargazers_count}</strong>
                     <span>Stars</span>
                 </li>
                 <li>
-                    <strong>48</strong>
+                    <strong>{repository.forks_count}</strong>
                     <span>Forks</span>
                 </li>
                 <li>
-                    <strong>57</strong>
+                    <strong>{repository.open_issues_count}</strong>
                     <span>Issues</span>
                 </li>
             </ul>
             </>
         </RepositoryInfo>
+        )}
 
         <Issues>
-            <Link to={`/uahsudhasud/`}>
-                <div>
-                    <strong>asdfasdf</strong>
-                    <p>asdfasf</p>
-                </div>
-            </Link>
+            
+            {issues.map(issue => (
+                <a key={issue.id} href={issue.html_url} target="_blank" rel="noreferrer">
+                    <div>
+                        <strong>{issue.title}</strong>
+                        <p>{issue.user.login}</p>
+                    </div>
+                </a>
+            ))}
+            
         </Issues>
     </>
     )

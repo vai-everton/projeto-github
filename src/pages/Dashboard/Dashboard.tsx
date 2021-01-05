@@ -3,7 +3,7 @@ import {Title, Form, Repositorie, Error}  from './styles'
 
 import { Link } from 'react-router-dom'
 
-import Logo from '../../assets/1587379765556-attachment.svg'
+import Logo from '../../assets/logo.svg'
 
 import api from '../../services/api'
 
@@ -31,10 +31,6 @@ const Dashboard:React.FC = () => {
     })
 
     const [inputError, setInputError] = useState('');
-
-    useEffect(() => {
-
-    })
 
     useEffect(() => {
         localStorage.setItem('@GitHubExplorer:repositories', JSON.stringify(repositories));
