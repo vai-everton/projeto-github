@@ -1,6 +1,8 @@
 import React, { FormEvent, useState, useEffect } from 'react'
 import {Title, Form, Repositorie, Error}  from './styles'
 
+import { Link } from 'react-router-dom'
+
 import Logo from '../../assets/1587379765556-attachment.svg'
 
 import api from '../../services/api'
@@ -85,7 +87,7 @@ const Dashboard:React.FC = () => {
             <Repositorie>
                 <>
                 {repositories.map(repository => (
-                    <a key={repository.full_name} href="teste">
+                    <Link key={repository.full_name} to={`/repository/${repository.full_name}`}>
                         <img
                             src={repository.owner.avatar_url}
                             alt={repository.owner.login}
@@ -94,7 +96,7 @@ const Dashboard:React.FC = () => {
                             <strong>{repository.full_name}</strong>
                             <p>{repository.description}</p>
                         </div>
-                    </a>
+                    </Link>
                 ))}
                 </>
             </Repositorie>
