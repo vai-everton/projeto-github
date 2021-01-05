@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useState, useEffect } from 'react'
 import {Title, Form, Repositorie, Error}  from './styles'
 
 import Logo from '../../assets/1587379765556-attachment.svg'
@@ -16,14 +16,27 @@ interface Repositorie {
 }
 
 const Dashboard:React.FC = () => {
-    
+
     const [newRepo, setNewRepo] = useState('');
 
-    const [repositories, setRepositories] = useState<Repositorie[]>([])
+    const [repositories, setRepositories] = useState<Repositorie[]> (() => {
+        const storagedRepositories = localStorage.getItem('@GitHubExplorer:repositories');
+
+        if (storagedRepositories) {
+            return JSON.parse(storagedRepositories);
+        } 
+        return [];
+    })
 
     const [inputError, setInputError] = useState('');
 
+    useEffect(() => {
 
+    })
+
+    useEffect(() => {
+        localStorage.setItem('@GitHubExplorer:repositories', JSON.stringify(repositories));
+    }, [repositories])
 
     async function handleRepositoryRequest(
         event:FormEvent<HTMLFormElement>
