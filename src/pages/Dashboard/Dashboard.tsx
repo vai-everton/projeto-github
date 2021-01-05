@@ -1,5 +1,5 @@
 import React, { FormEvent, useState } from 'react'
-import {Title, Form, Repositorie}  from './styles'
+import {Title, Form, Repositorie, Error}  from './styles'
 
 import Logo from '../../assets/1587379765556-attachment.svg'
 
@@ -16,24 +16,40 @@ interface Repositorie {
 }
 
 const Dashboard:React.FC = () => {
+    
     const [newRepo, setNewRepo] = useState('');
+
     const [repositories, setRepositories] = useState<Repositorie[]>([])
+
+    const [inputError, setInputError] = useState('');
 
 
 
     async function handleRepositoryRequest(
         event:FormEvent<HTMLFormElement>
     ):Promise<void> {
+
         event.preventDefault();
-        console.log(newRepo);
-
-        const response = await api.get<Repositorie>(`/repos/${newRepo}`)
-
-        const repository = response.data;
 
 
-        setRepositories([...repositories, repository])
-        setNewRepo(newRepo);
+
+        if(!newRepo) {
+            setInputError('Digite o autor/nome do repositório');
+        }
+        else {
+            try {
+                const response = await api.get<Repositorie>(`/repos/${newRepo}`)
+
+                const repository = response.data;
+
+
+                setRepositories([...repositories, repository])
+                setNewRepo(newRepo);
+                setInputError('');
+            } catch(err) { 
+                setInputError('Erro na busca. Não encontrado')
+            }
+        }
     }
 
     return (
@@ -41,7 +57,7 @@ const Dashboard:React.FC = () => {
             <img src={ Logo } alt="GitHub Explorer" />
             <Title>Explore repositórios no github</Title>
 
-            <Form onSubmit={handleRepositoryRequest}>
+            <Form hasError={!!inputError} onSubmit={handleRepositoryRequest}>
                 <input
                     value={newRepo}
                     onChange={(e) => setNewRepo(e.target.value)}
@@ -50,6 +66,8 @@ const Dashboard:React.FC = () => {
 
                 <button type="submit" >Pesquisar</button>
             </Form>
+
+            { inputError && <Error>{inputError}</Error> }
 
             <Repositorie>
                 <>
